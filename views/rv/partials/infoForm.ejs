@@ -1,0 +1,18 @@
+<div class="form-group mb-3" >
+    <label for="logoUrl"> Logo Url:</label>
+    <br />
+    <input type="text" name="logoUrl" value="<%= cohort.logoUrl %>" placeholder="Cohort's logo"  />
+</div>
+<div>
+    <label for="name"> Name: </label>
+    <br />
+    <input type="text" name="name" value="<%= cohort.name %>" />
+</div>
+<div>
+    <label for="members"> Members</label>
+    <br />
+    <textarea name="members" id="member" cols="30" rows="10"
+       value="" placeholder="Enter team member names separeted by commas"><%= cohort.members %> </textarea>
+
+    <input type="submit" style="margin-left: 85%" class="button btn btn-outline-primary" />
+</div>

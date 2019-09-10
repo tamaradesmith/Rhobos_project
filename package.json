@@ -1,0 +1,23 @@
+{
+  "name": "rv_project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "chart.js": "^2.8.0",
+    "cookie-parser": "^1.4.4",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "knex": "^0.19.3",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.1",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Tamara Smith",
+  "license": "ISC",
+  "description": ""
+}
