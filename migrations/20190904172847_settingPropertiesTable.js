@@ -1,6 +1,6 @@
 
 exports.up = function (knex) {
-    return knex.schema.createTable("property_setttings", t => {
+    return knex.schema.createTable("properties_setting", t => {
         t.bigIncrements("id");
         t.string("field");
         t.integer("value")
@@ -11,5 +11,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-    return knex.schema.dropTable("property_setttings")
+    return knex.schema.dropTable("properties_setting")
 };

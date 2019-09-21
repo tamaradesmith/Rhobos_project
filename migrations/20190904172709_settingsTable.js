@@ -1,6 +1,6 @@
 
 exports.up = function (knex) {
-    return knex.schema.createTable("controller_setttings", t => {
+    return knex.schema.createTable("controller_settings", t => {
         t.bigIncrements("id");
         t.string("field");
         t.integer("value")
@@ -11,5 +11,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-    return knex.schema.dropTable("setttings")
+    return knex.schema.dropTable("controller_settings")
 };

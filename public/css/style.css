@@ -76,7 +76,7 @@ h1 {
 }
 .box3 {
   background:rgba(80, 80, 255, .5);
-  border: 3px double white
+  border: 3px double white;
   grid-column: 8/10;
 }
 @media (min-width: 992px) {
