@@ -30,21 +30,21 @@ const knex = require('../../client')
 //         });
 //     })
 
-knex('devices')
-    .select('id')
-    .where({ name: "colour" })
-    .then((data) => {
-        devices_id = data[0].id
-        knex("sensors")
-            .insert([
-                { type: "red", device_id: devices_id },
-                { type: "green", device_id: devices_id },
-                { type: "blue", device_id: devices_id },
-                { type: "clear", device_id: devices_id },
-                { type: "lux", device_id: devices_id },
-                { type: "cct", device_id:  devices_id },
-            ]).returning('type').then((e) => {
-                console.log(e)
-                knex.destroy();
-            })
-    })
+// knex('devices')
+//     .select('id')
+//     .where({ name: "colour" })
+//     .then((data) => {
+//         devices_id = data[0].id
+//         knex("sensors")
+//             .insert([
+//                 { type: "red", device_id: devices_id },
+//                 { type: "green", device_id: devices_id },
+//                 { type: "blue", device_id: devices_id },
+//                 { type: "clear", device_id: devices_id },
+//                 { type: "lux", device_id: devices_id },
+//                 { type: "cct", device_id:  devices_id },
+//             ]).returning('type').then((e) => {
+//                 console.log(e)
+//                 knex.destroy();
+//             })
+//     })

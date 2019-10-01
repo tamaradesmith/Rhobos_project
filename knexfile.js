@@ -9,9 +9,14 @@ module.exports = {
       username: 'tamara',
       password: 'tamara'
     },
-    mirgrations:{
-      directory: './db/magrations'
-    }
+
+    migrations: {
+      // tableName: 'migrations',
+      directory: 'db/migrations',
+    },
+    seeds: {
+      directory: 'db/seeds'
+    },
   },
 
 };
