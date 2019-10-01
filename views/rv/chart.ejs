@@ -1,24 +1,40 @@
-
   <%- include('../partials/header') %>
    
    <h1>Rv App</h1>
 
     <article class="grid-containor">
-      <div class="chart">
+      <div class="chart" style="min-height:300px">
         
         <canvas id="myChart" ></canvas>
       </div>
 
       <div id="reading-box " class="box-grid">
-        <div class="box box1">Button</div>
-        <div class="box box2">Button</div>
-        <div class="box box3">Button</div>
+
+          <button id="pump" name="pumpButton" class="box box1"> ON </div>
+        </button>
+          
+
+        <div id="tempature" class="box box2">
+          <%= reading.value  %>
+          <p>
+            <%= (reading.createdAt)  %>
+          </p>
+          </div>
+
+
+        <div class="box box3">
+          <!-- <=  friendlyDate(reading.createdAt) %> button</div> -->
       </div>
-      <input type="text" id="text">
-      <button>SEND</button>
+    
     </article>
 
 
+
+    <script type="text/javascript" src="./js/friendlyDate.js"></script>
     
+    <script type="text/javascript" src="./js/buttonEvent.js"></script>
+          
+    <script type="text/javascript" src="./js/tempature.js"></script>
+    
+
 <%- include('../partials/footer') %>
-     

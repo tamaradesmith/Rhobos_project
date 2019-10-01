@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.19.0",
     "cookie-parser": "^1.4.4",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
+    "jquery": "^3.4.1",
     "knex": "^0.19.3",
     "method-override": "^3.0.0",
     "morgan": "^1.9.1",
-    "pg": "^7.12.1"
+    "pg": "^7.12.1",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {},
   "scripts": {

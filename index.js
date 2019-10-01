@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http')
 const logger = require('morgan');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -33,7 +34,7 @@ app.use(rv)
 const PORT = 4000;
 const ADDRESS = "localhost"
 
-app.listen(4000, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log( `Port: ${PORT}, address: ${ADDRESS}`);
 });
 

@@ -10,7 +10,7 @@ module.exports = {
       password: 'tamara'
     },
     mirgrations:{
-      directory: '.db/magrations'
+      directory: './db/magrations'
     }
   },
 
