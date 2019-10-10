@@ -23,7 +23,7 @@ const knex = require('../../client')
 //     .then((data) => {
 //         console.log(data[0].id)
 //         return knex('devices').insert([
-//             { name: 'colour', node_id: data[0].id },
+//             { name: 'colour', node_id: data[0].id, IPaddress: "192.168.0.201 },
 //         ]).then(() => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -48,3 +48,21 @@ const knex = require('../../client')
 //                 knex.destroy();
 //             })
 //     })
+
+
+// knex('devices')
+//     .select('id')
+//     .where({ name: "colour" })
+//     .then((data) => {
+//         devices_id = data[0].id
+//         knex("controllers")
+//             .insert([
+//               { type: "pump", device_id: devices_id },
+//                 // { type: "green", device_id: devices_id },
+                
+//             ]).returning('type').then((e) => {
+//                 console.log(e)
+//                 knex.destroy();
+//             })
+//     })
+

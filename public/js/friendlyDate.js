@@ -25,8 +25,8 @@ function friendlyDate(time) {
     }
 
     return fuzzy;
-}
-// console.log(frindlyDate(new Date('Aug 27, 19 13:20')))
+};
 
 
-module.exports= friendlyDate;
+
+module.exports = friendlyDate;

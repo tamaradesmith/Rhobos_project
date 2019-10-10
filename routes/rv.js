@@ -1,15 +1,28 @@
 const knex = require('../client');
 const express = require('express');
 const router = express.Router();
-const tempatureCheck = require('../public/js/tempatureCheck');
+const tempatureCheck = require('../controller/tempatureCheck');
+const sensors = require("./sensorsHelpers")
+const controller = require("./controllerHelpers")
+const queries = require('../db/query.js')
 const axios = require('axios');
 const convert = require('xml-js');
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
+
+
+// Landing Page
 
 router.get('/', (req, res) => {
     res.render('rv/chart', {
         reading: '',
     });
 })
+
+
+
+// Node page DSSS
 
 router.get('/dsss', (req, res) => {
     knex("nodes")
@@ -38,6 +51,22 @@ router.get('/dsss', (req, res) => {
         })
 });
 
+// Controller routes
+
+
+router.post('/boolean', async (req, res) => {
+    const id = req.body.deviceID;
+    const state = req.body.deviceState
+    const deviceIp = await queries.getDeviceIp(id)
+    await controller.booleanOpp(deviceIp, state)
+    // uncatch prosie att about fixxing it.
+
+})
+
+// Information routes
+
+// Current Tempature
+
 router.get('/currentTemp', async (req, res) => {
 
     const url = "http://192.168.0.201/api/sensors/colour/red"
@@ -50,7 +79,19 @@ router.get('/currentTemp', async (req, res) => {
 
 })
 
-// get sensor reading
+// get last temputature in DB
+
+router.post('/tempSensor', (req, res) => {
+    sensor.lastReading(req)
+
+});
+
+
+
+// Save Readings to DB
+
+
+//Colour Sensors Save
 
 router.post('/rs', (req, res) => {
     const postParams = {
@@ -60,69 +101,33 @@ router.post('/rs', (req, res) => {
         date: req.body.date,
         value: req.body.value
     };
-    knex("nodes")
-        .select("*")
-        .where({ name: postParams.node })
-        .then((data) => {
-            return knex("devices")
-                .select("*")
-                .where({ node_id: data[0].id, name: postParams.device })
-        }).then((data) => {
-            return knex("sensors")
-                .select("*")
-                .where({ device_id: data[0].id, type: postParams.sensor })
-        }).then((data) => {
-            knex("reading")
-                .insert([
-                    {
-                        value: postParams.value,
-                        time: postParams.date,
-                        sensor_id: data[0].id
-                    }
-                ])
-                .returning("*")
-                .then((data) => {
-                    res.send('Reading reseved');
-                });
-        });
+    sensors.saveSensorReading(postParams)
+    res.send(`sensors: ${postParams.sensor}`)
+
 });
 
 
-router.post('/tempSensor', (req, res) => {
-    const postParams = {
-        node: req.body.node,
-        device: req.body.device,
-        sensor: req.body.sensor,
-        date: req.body.date,
-        value: req.body.value
-    };
-    knex("nodes")
-        .select("*")
-        .where({ name: postParams.node })
-        .then((data) => {
-            return knex("devices")
-                .select("*")
-                .where({ node_id: data[0].id, name: postParams.device })
-        }).then((data) => {
-            return knex("sensors")
-                .select("*")
-                .where({ device_id: data[0].id, type: postParams.sensor })
-        }).then((data) => {
-            knex("reading")
-                .insert([
-                    {
-                        value: postParams.value,
-                        time: postParams.date,
-                        sensor_id: data[0].id
-                    }
-                ])
-                .returning("*")
-                .then((data) => {
-                    tempatureCheck(data[0]);
-                    res.send(' Tempature Reading reseved');
-                });
-        });
+// Tempature sensor
+
+router.post('/tempature', (req, res) => {
+    console.log(req.body)
+    // const postParams = {
+    //     node: req.body.node,
+    //     device: req.body.device,
+    //     sensor: req.body.sensor,
+    //     date: req.body.date,
+    //     value: req.body.value
+    // };
+    // sensors.saveSensorReading(postParams)
+    res.send(`sensors:`)
+
 });
 
+
+
+
+router.get('/test', (req, res) => {
+    res.send("got it!")
+})
 
 module.exports = router;
