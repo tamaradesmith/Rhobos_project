@@ -1,15 +1,20 @@
 const knex = require('../client');
 const express = require('express');
 const router = express.Router();
-const tempatureCheck = require('../controller/tempatureCheck');
-const sensors = require("./sensorsHelpers")
-const controller = require("./controllerHelpers")
-const queries = require('../db/query.js')
-const axios = require('axios');
-const convert = require('xml-js');
+// const axios = require('axios');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+
+
+// Helper files
+const Controller = require("./controllerHelpers")
+
+// Query files
+const SensorsQuery = require("../db/queries/sensorsQuery")
+const NodeQuery = require("../db/queries/nodeQuery")
+const DeviceQueries = require('../db/queries/deviceQuery.js')
+
 
 
 // Landing Page
@@ -47,6 +52,7 @@ router.get('/dsss', (req, res) => {
             res.render('rv/chart', {
                 reading: data[0]
             });
+            // res.send({reading: data[0]});
 
         })
 });
@@ -56,10 +62,11 @@ router.get('/dsss', (req, res) => {
 
 router.post('/boolean', async (req, res) => {
     const id = req.body.deviceID;
-    const state = req.body.deviceState
-    const deviceIp = await queries.getDeviceIp(id)
-    await controller.booleanOpp(deviceIp, state)
-    // uncatch prosie att about fixxing it.
+    const state = req.body.controllerState;
+    const name = req.body.controllerName;
+    const deviceIp = await queries.getDeviceIp(id);
+    await Controller.booleanOpp(deviceIp, state, name);
+
 
 })
 
@@ -67,22 +74,32 @@ router.post('/boolean', async (req, res) => {
 
 // Current Tempature
 
-router.get('/currentTemp', async (req, res) => {
+// router.get('/currentTemp', async (req, res) => {
+//     console.log("route ")
+//     const url = "http://192.168.0.201/api/sensors/colour/red"
+//     const currentTemp = await axios.get(`${url}`);
+//     const jsonData = convert.xml2json(currentTemp.data, { compact: true, space: 4 });
+//     const parsedData = JSON.parse(jsonData);
+//     const currentTempValue = parsedData.reply.sensors.colour.red.value._text;
+//     console.info(currentTempValue);
+//     res.send(currentTempValue);
 
-    const url = "http://192.168.0.201/api/sensors/colour/red"
-    const currentTemp = await axios.get(`${url}`);
-    const jsonData = convert.xml2json(currentTemp.data, { compact: true, space: 4 });
-    const parsedData = JSON.parse(jsonData);
-    const currentTempValue = parsedData.reply.sensors.colour.red.value._text;
-    console.info(currentTempValue);
-    res.send(currentTempValue);
+// })
+router.post('/currentTemp', async (req, res) => {
+    const id = req.body.deviceID;
+    const name = req.body.sensorName;
+    const deviceIp = await DeviceQueries.getDeviceIp(id);
+    const reading = await SensorsQuery.currentReading(name, deviceIp)
+    // console.log("reading: ", reading)
+
+    res.send(`${reading}`);
 
 })
 
 // get last temputature in DB
 
 router.post('/tempSensor', (req, res) => {
-    sensor.lastReading(req)
+    SensorsQuery.lastReading(req)
 
 });
 
@@ -101,7 +118,7 @@ router.post('/rs', (req, res) => {
         date: req.body.date,
         value: req.body.value
     };
-    sensors.saveSensorReading(postParams)
+    SensorsQuery.saveSensorReading(postParams)
     res.send(`sensors: ${postParams.sensor}`)
 
 });
@@ -118,16 +135,30 @@ router.post('/tempature', (req, res) => {
     //     date: req.body.date,
     //     value: req.body.value
     // };
-    // sensors.saveSensorReading(postParams)
+    // Sensors.saveSensorReading(postParams)
     res.send(`sensors:`)
 
 });
 
 
+// query Info
 
+// nodes
+router.get('/nodes', async (req, res) => {
+    const nodesData = await NodeQuery.getAll();
+    res.send(nodesData);
+})
 
-router.get('/test', (req, res) => {
-    res.send("got it!")
+// device
+router.get('/devices', async (req, res) => {
+    const deviceData = await DeviceQueries.getAll()
+    res.send(deviceData);
+})
+
+router.get(`/devices/:id`, async (req, res) => {
+    const id = req.params.id;
+    const sensorsData = await SensorsQuery.getSensorsByDevice(id);
+    res.send(sensorsData)
 })
 
 module.exports = router;

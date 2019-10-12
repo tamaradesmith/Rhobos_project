@@ -65,11 +65,3 @@ const knex = require('../../client')
 //             })
 //     })
 
-// knex('devices')
-//     .where("id", 1)
-//     .update({
-//         IPaddress: "192.168.0.201"
-//     }).then(data => {
-//         console.log(data)
-//         knex.destroy();
-//     })
