@@ -3,30 +3,23 @@ const axios = require('axios');
 
 
 module.exports = {
-    getOne(id) {
-        // console.log("id: ", id)
-        return knex('devices')
+    async getOne(id) {
+        const deviceData = await knex('devices')
             .select("*")
-            .where({ id: id })
-            .then(deviceData =>{
-                return deviceData;
-            })
+            .where({ id: id });
+        return deviceData;
     },
-    getAll() {
-        return knex('devices')
-        .select("*")
-        .then(devicesData =>{
-            return devicesData;
-        })
+    async getAll() {
+        const devicesData = await knex('devices')
+            .select("*");
+        return devicesData;
     },
-    getDeviceIp(id) {
+    async getDeviceIp(id) {
         console.log(id)
-        return knex('devices')
+        const devicesIP = await knex('devices')
             .select('IPaddress')
-            .where({ id: id })
-            .then((devicesIP) => {
-                return `http://${devicesIP[0].IPaddress}/api`
-            })
+            .where({ id: id });
+        return `http://${devicesIP[0].IPaddress}/api`;
     },
 
 }

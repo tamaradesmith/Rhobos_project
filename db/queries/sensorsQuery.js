@@ -34,60 +34,37 @@ module.exports = {
                     });
             });
     },
+    async lastReading(sensor_id) {
+        const reading = await knex("reading")
+            .select("value", "time")
+            .where({ id: sensor_id });
+            console.log(reading)
+        return reading;
 
-    lastReading(params) {
-        const postParams = {
-            node: params.body.node,
-            device: params.body.device,
-            sensor: params.body.sensor,
-            date: params.body.date,
-            value: params.body.value
-        };
-        knex("nodes")
-            .select("id")
-            .where({ name: postParams.node })
-            .then((nodes) => {
-                return knex("devices")
-                    .select("id")
-                    .where({ node_id: nodes[0].id, name: postParams.device })
-            }).then((devices) => {
-                return knex("sensors")
-                    .select("*")
-                    .where({ device_id: devices[0].id, type: postParams.sensor })
-            }).then((sensors) => {
-                knex("reading")
-                // todo: get reading
-                    // .insert([
-                    //     {
-                    //         value: postParams.value,
-                    //         time: postParams.date,
-                    //         sensor_id: sensors[0].id
-                    //     }
-                    // ])
-                    .returning("*")
-                    .then((readings) => {
-                        tempatureCheck(readings[0]);
-                        res.send(' Tempature Reading reseved');
-                    });
-            });
     },
-    async currentReading(name, ip) {
+    async allReadings(sensor_id) {
+        const readings = await knex('reading')
+            .select("*")
+            .where({ sensor_id: sensor_id })
+            .limit(24);
+        return readings;
+
+    },
+    async  currentReading(name, ip) {
         const url = `${ip}/sensors/colour/${name}`
         const currentTemp = await axios.get(`${url}`)
-       const value = await this.getValue(currentTemp.data);
-       return value;
+        const value = await this.getValue(currentTemp.data);
+        return value;
     },
-    getValue(data){
+    getValue(data) {
         const start = data.indexOf("<value>");
         const end = data.indexOf("</value>");
         return data.substring(start + 7, end);
     },
-    getSensorsByDevice(device_id){
-        return knex("sensors")
-        .select("*")
-        .where({device_id: device_id})
-        .then(sensorData =>{
-            return sensorData;
-        });
+    async getSensorsByDevice(device_id) {
+        const sensorData = await knex("sensors")
+            .select("*")
+            .where({ device_id: device_id });
+        return sensorData;
     },
 }

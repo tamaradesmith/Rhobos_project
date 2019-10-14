@@ -1,6 +1,5 @@
 
 const knex = require('../../client');
-const axios = require('axios');
 
 // controller Queries
 
@@ -12,12 +11,10 @@ module.exports = {
         const end = data.indexOf("</value>");
         return data.substring(start + 7, end);
     },
-    getControllerByDevice(device_id){
-        return knex("controllers")
-        .select("*")
-        .where({device_id: device_id})
-        .then(ControllersData =>{
-            return ControllersData;
-        });
+    async getControllerByDevice(device_id){
+        const ControllersData = await knex("controllers")
+            .select("*")
+            .where({ device_id: device_id });
+        return ControllersData;
     },
 }

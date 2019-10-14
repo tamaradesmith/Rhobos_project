@@ -20,46 +20,45 @@ const DeviceQuery = require('../db/queries/deviceQuery.js')
 
 // Landing Page
 
-router.get('/', (req, res) => {
-    res.render('rv/chart', {
-        reading: '',
-    });
-})
+// router.get('/', (req, res) => {
+//     res.render('rv/chart', {
+//         reading: '',
+//     });
+// })
 
 
 
 // Node page DSSS
 
-router.get('/dsss', (req, res) => {
-    knex("nodes")
-        .select("id")
-        .where({ name: "dsss" })
-        .then((data) => {
-            return knex("devices")
-                .select("id")
-                .where({ node_id: data[0].id, name: "colour" })
-        }).then((data) => {
-            return knex("sensors")
-                .select("id")
-                .where({ device_id: data[0].id, type: "red" })
-        }).then((data) => {
-            return knex("reading")
-                .select("*")
-                .where({ sensor_id: data[0].id })
-                .orderBy('createdAt', 'desc')
-                .limit(1)
-        }).then((data) => {
-            const reading = data[0]
-            res.render('rv/chart', {
-                reading: data[0]
-            });
-            // res.send({reading: data[0]});
+// router.get('/dsss', (req, res) => {
+//     knex("nodes")
+//         .select("id")
+//         .where({ name: "dsss" })
+//         .then((data) => {
+//             return knex("devices")
+//                 .select("id")
+//                 .where({ node_id: data[0].id, name: "colour" })
+//         }).then((data) => {
+//             return knex("sensors")
+//                 .select("id")
+//                 .where({ device_id: data[0].id, type: "red" })
+//         }).then((data) => {
+//             return knex("reading")
+//                 .select("*")
+//                 .where({ sensor_id: data[0].id })
+//                 .orderBy('createdAt', 'desc')
+//                 .limit(1)
+//         }).then((data) => {
+//             const reading = data[0]
+//             res.render('rv/chart', {
+//                 reading: data[0]
+//             });
+//             // res.send({reading: data[0]});
 
-        })
-});
+//         })
+// });
 
 // Controller routes
-
 
 router.post('/boolean', async (req, res) => {
     const id = req.body.deviceID;
@@ -67,42 +66,22 @@ router.post('/boolean', async (req, res) => {
     const name = req.body.controllerName;
     const deviceIp = await queries.getDeviceIp(id);
     await Controller.booleanOpp(deviceIp, state, name);
-
-
 })
 
 // Information routes
 
 // Current Tempature
 
-// router.get('/currentTemp', async (req, res) => {
-//     console.log("route ")
-//     const url = "http://192.168.0.201/api/sensors/colour/red"
-//     const currentTemp = await axios.get(`${url}`);
-//     const jsonData = convert.xml2json(currentTemp.data, { compact: true, space: 4 });
-//     const parsedData = JSON.parse(jsonData);
-//     const currentTempValue = parsedData.reply.sensors.colour.red.value._text;
-//     console.info(currentTempValue);
-//     res.send(currentTempValue);
-
-// })
 router.post('/currentTemp', async (req, res) => {
     const id = req.body.deviceID;
     const name = req.body.sensorName;
     const deviceIp = await DeviceQuery.getDeviceIp(id);
     const reading = await SensorsQuery.currentReading(name, deviceIp)
-    // console.log("reading: ", reading)
-
     res.send(`${reading}`);
 
 })
 
-// get last temputature in DB
 
-router.post('/tempSensor', (req, res) => {
-    SensorsQuery.lastReading(req)
-
-});
 
 
 
@@ -111,7 +90,7 @@ router.post('/tempSensor', (req, res) => {
 
 //Colour Sensors Save
 
-router.post('/rs', (req, res) => {
+router.post('/sensors/readings', (req, res) => {
     const postParams = {
         node: req.body.node,
         device: req.body.device,
@@ -148,7 +127,7 @@ router.post('/tempature', (req, res) => {
 router.get('/nodes', async (req, res) => {
     const nodesData = await NodeQuery.getAll();
     res.send(nodesData);
-})
+});
 
 // device
 
@@ -156,26 +135,51 @@ router.get('/nodes', async (req, res) => {
 router.get('/devices', async (req, res) => {
     const deviceData = await DeviceQuery.getAll()
     res.send(deviceData);
-})
+});
 
-//  get one device
+//  get one device info
 router.get(`/device/:id`, async (req, res) => {
-    const id = req.params.id;
-    const deviceData = await DeviceQuery.getOne(id);
+    const device_id = req.params.id;
+    const deviceData = await DeviceQuery.getOne(device_id);
     res.send(deviceData)
-})
+});
 
 // get sensors on one device
 router.get(`/devices/:id/sensors`, async (req, res) => {
-    const id = req.params.id;
-    const sensorsData = await SensorsQuery.getSensorsByDevice(id);
+    const device_id = req.params.id;
+    const sensorsData = await SensorsQuery.getSensorsByDevice(device_id);
     res.send(sensorsData)
-})
+});
 
 // get Controller on one device
 router.get(`/devices/:id/controllers`, async (req, res) => {
-    const id = req.params.id;
-    const ControllersData = await ControllersQuery.getControllerByDevice(id);
-    res.send(ControllersData)
-})
+    const device_id = req.params.id;
+    const controllersData = await ControllersQuery.getControllerByDevice(device_id);
+
+    res.send(controllersData)
+});
+
+
+//  Sensors
+
+// get all readings of one sensor
+router.get('/sensor/:id/readings', async (req, res) => {
+    const sensor_id = req.params.id;
+    const readings = await SensorsQuery.allReadings(sensor_id);
+    console.log("sensorReadings: ", readings)
+    res.send(readings)
+
+});
+
+// get last temputature in DB
+
+router.get('/sensor/:id/reading', async (req, res) => {
+    const sensor_id = req.params.id
+    console.log(sensor_id)
+    const lastReading = await SensorsQuery.lastReading(sensor_id)
+    return res.send(lastReading)
+});
+
+
+
 module.exports = router;

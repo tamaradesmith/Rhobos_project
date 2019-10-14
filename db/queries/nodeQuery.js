@@ -1,12 +1,10 @@
 const knex = require('../../client');
 
 module.exports = {
-  getAll() {
-    return knex("nodes")
-      .select("*")
-      .then(nodeData => {
-        return nodeData;
-      });
+  async getAll() {
+    const nodeData = await knex("nodes")
+      .select("*");
+    return nodeData;
   },
 
 };
