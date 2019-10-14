@@ -12,8 +12,9 @@ const Controller = require("./controllerHelpers")
 
 // Query files
 const SensorsQuery = require("../db/queries/sensorsQuery")
+const ControllersQuery = require("../db/queries/controllersQuery")
 const NodeQuery = require("../db/queries/nodeQuery")
-const DeviceQueries = require('../db/queries/deviceQuery.js')
+const DeviceQuery = require('../db/queries/deviceQuery.js')
 
 
 
@@ -88,7 +89,7 @@ router.post('/boolean', async (req, res) => {
 router.post('/currentTemp', async (req, res) => {
     const id = req.body.deviceID;
     const name = req.body.sensorName;
-    const deviceIp = await DeviceQueries.getDeviceIp(id);
+    const deviceIp = await DeviceQuery.getDeviceIp(id);
     const reading = await SensorsQuery.currentReading(name, deviceIp)
     // console.log("reading: ", reading)
 
@@ -150,15 +151,31 @@ router.get('/nodes', async (req, res) => {
 })
 
 // device
+
+//  get all device
 router.get('/devices', async (req, res) => {
-    const deviceData = await DeviceQueries.getAll()
+    const deviceData = await DeviceQuery.getAll()
     res.send(deviceData);
 })
 
-router.get(`/devices/:id`, async (req, res) => {
+//  get one device
+router.get(`/device/:id`, async (req, res) => {
+    const id = req.params.id;
+    const deviceData = await DeviceQuery.getOne(id);
+    res.send(deviceData)
+})
+
+// get sensors on one device
+router.get(`/devices/:id/sensors`, async (req, res) => {
     const id = req.params.id;
     const sensorsData = await SensorsQuery.getSensorsByDevice(id);
     res.send(sensorsData)
 })
 
+// get Controller on one device
+router.get(`/devices/:id/controllers`, async (req, res) => {
+    const id = req.params.id;
+    const ControllersData = await ControllersQuery.getControllerByDevice(id);
+    res.send(ControllersData)
+})
 module.exports = router;
