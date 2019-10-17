@@ -2,10 +2,11 @@
 exports.up = function(knex) {
     return knex.schema.createTable("properties", t => {
         t.bigIncrements("id");
+        t.string("name");
         t.string("type");
         t.integer('device_id');
         t.foreign('device_id').references('devices.id');
-        t.timestamp("createdAt").defaultTo(knex.fn.now());
+        t.timestamp;
     })
 };
 

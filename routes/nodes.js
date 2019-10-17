@@ -58,37 +58,15 @@ const DeviceQuery = require('../db/queries/deviceQuery.js')
 //         })
 // });
 
-// Controller routes
 
-router.post('/boolean', async (req, res) => {
-    const id = req.body.deviceID;
-    const state = req.body.controllerState;
-    const name = req.body.controllerName;
-    const deviceIp = await queries.getDeviceIp(id);
-    await Controller.booleanOpp(deviceIp, state, name);
-})
 
-// Information routes
 
-// Current Tempature
-
-router.post('/currentTemp', async (req, res) => {
-    const id = req.body.deviceID;
-    const name = req.body.sensorName;
-    const deviceIp = await DeviceQuery.getDeviceIp(id);
-    const reading = await SensorsQuery.currentReading(name, deviceIp)
-    res.send(`${reading}`);
-
-})
 
 
 
 
 
 // Save Readings to DB
-
-
-//Colour Sensors Save
 
 router.post('/sensors/readings', (req, res) => {
     const postParams = {
@@ -100,23 +78,6 @@ router.post('/sensors/readings', (req, res) => {
     };
     SensorsQuery.saveSensorReading(postParams)
     res.send(`sensors: ${postParams.sensor}`)
-
-});
-
-
-// Tempature sensor
-
-router.post('/tempature', (req, res) => {
-    console.log(req.body)
-    // const postParams = {
-    //     node: req.body.node,
-    //     device: req.body.device,
-    //     sensor: req.body.sensor,
-    //     date: req.body.date,
-    //     value: req.body.value
-    // };
-    // Sensors.saveSensorReading(postParams)
-    res.send(`sensors:`)
 
 });
 
@@ -133,14 +94,14 @@ router.get('/nodes', async (req, res) => {
 
 //  get all device
 router.get('/devices', async (req, res) => {
-    const deviceData = await DeviceQuery.getAll()
+    const deviceData = await DeviceQuery.getAllDevices()
     res.send(deviceData);
 });
 
 //  get one device info
 router.get(`/device/:id`, async (req, res) => {
     const device_id = req.params.id;
-    const deviceData = await DeviceQuery.getOne(device_id);
+    const deviceData = await DeviceQuery.getOneDevice(device_id);
     res.send(deviceData)
 });
 
@@ -155,7 +116,6 @@ router.get(`/devices/:id/sensors`, async (req, res) => {
 router.get(`/devices/:id/controllers`, async (req, res) => {
     const device_id = req.params.id;
     const controllersData = await ControllersQuery.getControllerByDevice(device_id);
-
     res.send(controllersData)
 });
 
@@ -166,20 +126,59 @@ router.get(`/devices/:id/controllers`, async (req, res) => {
 router.get('/sensor/:id/readings', async (req, res) => {
     const sensor_id = req.params.id;
     const readings = await SensorsQuery.allReadings(sensor_id);
-    console.log("sensorReadings: ", readings)
+    // console.log("sensorReadings: ", readings)
     res.send(readings)
 
 });
 
-// get last temputature in DB
+// all sensor readings on one devise
+router.get('/device/:id/sensors/readings', async (req, res) => {
+    const device_id = req.params.id;
+    const sensorsData = await SensorsQuery.getSensorsByDevice(device_id);
+    const allReadings = await SensorsQuery.getSensorsReading(sensorsData)
+    console.log("allReadings ", allReadings)
+    res.send(allReadings)
+
+});
+//  get last reading of a sensor in db
 
 router.get('/sensor/:id/reading', async (req, res) => {
-    const sensor_id = req.params.id
-    console.log(sensor_id)
-    const lastReading = await SensorsQuery.lastReading(sensor_id)
-    return res.send(lastReading)
+    const sensor_id = req.params.id;
+    const reading = await SensorsQuery.lastReading(sensor_id);
+    res.send(reading)
+
 });
 
+// Controller 
+
+// Toggle on/off 
+
+router.get('/controller/:id/boolean', async (req, res) => {
+    const controller_id = req.params.id;
+    const controllerData = await ControllersQuery.getControllerFromId(controller_id)
+    const deviceIp = await DeviceQuery.getDeviceIp(controllerData.device_id);
+     await Controller.toggleState(deviceIp, controllerData.name)
+    res.send( "finished")
+})
+
+
+// Information routes
+
+// Current Tempature
+
+router.get('/sensor/:id/current', async (req, res) => {
+
+    const sensor_id = req.params.id;
+    const sensorData = await SensorsQuery.getSensorFromId(sensor_id);
+    // const deviceIp = await DeviceQuery.getDeviceIp(sensorData.device_id);
+    const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
+
+
+    const reading = await SensorsQuery.currentReading(sensorData.name, deviceData[0])
+    console.log(reading)
+    res.send(reading);
+
+})
 
 
 module.exports = router;

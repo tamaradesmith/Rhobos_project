@@ -9,21 +9,21 @@ const knex = require('../../client')
 //                     value: '3255.000'
 // }
 // knex("nodes")
-//     .insert({name: "dsss"})
-//     .then(() => {
-//         knex.destroy()
-//         console.log("finished Nodes")
-//     });
+//   .insert({ name: "dsss", description: "Over Blown Home environment moniteering and contral system node" })
+//   .then(() => {
+//     knex.destroy()
+//     console.log("finished Nodes")
+//   });
 
 
 
 // knex('nodes')
 //     .select('id')
 //     .where({ name: "dsss" })
-//     .then((data) => {
-//         console.log(data[0].id)
+//     .then((nodeData) => {
+//         console.log(nodeData[0].id)
 //         return knex('devices').insert([
-//             { name: 'colour', node_id: data[0].id, IPaddress: "192.168.0.201 },
+//             { name: 'colour', node_id: nodeData[0].id, IPaddress: "192.168.0.201", description: "decorative garden device for lights and water feature", type: "huzzah" },
 //         ]).then(() => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -37,32 +37,34 @@ const knex = require('../../client')
 //         devices_id = data[0].id
 //         knex("sensors")
 //             .insert([
-//                 { type: "red", device_id: devices_id },
-//                 { type: "green", device_id: devices_id },
-//                 { type: "blue", device_id: devices_id },
-//                 { type: "clear", device_id: devices_id },
-//                 { type: "lux", device_id: devices_id },
-//                 { type: "cct", device_id:  devices_id },
-//             ]).returning('type').then((e) => {
-//                 console.log(e)
+//                 { name: "red", type: "range", minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
+//                 { name: "green", type: "range", minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
+//                 { name: "blue", type: "range",  minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
+//                 { name: "clear", type: "range", minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
+//                 { name: "lux", type: "range", minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
+//                 { name: "cct", type: "range", minValue: "0.000", maxValue: "100000.000", device_id:  devices_id },
+//             ]).then((data) => {
+//                 console.log(data)
 //                 knex.destroy();
 //             })
 //     })
 
 
 // knex('devices')
-//     .select('id')
-//     .where({ name: "colour" })
-//     .then((data) => {
-//         devices_id = data[0].id
-//         knex("controllers")
-//             .insert([
-//               { type: "pump", device_id: devices_id },
-//                 // { type: "green", device_id: devices_id },
-                
-//             ]).returning('type').then((e) => {
-//                 console.log(e)
-//                 knex.destroy();
-//             })
-//     })
+//   .select('id')
+//   .where({ name: "colour" })
+//   .then((data) => {
+//     devices_id = data[0].id
+//     knex("controllers")
+//       .insert([
+//         { name: "pump", type: "boolean", device_id: devices_id },
+//         { name: "red", type: "boolean", device_id: devices_id },
+//         { name: "blue", type: "boolean", device_id: devices_id },
+//         { name: "led", type: "boolean", device_id: devices_id },
+//       ]).returning('type').then((e) => {
+//         console.log(e)
+//         knex.destroy();
+//       })
+//   })
+
 

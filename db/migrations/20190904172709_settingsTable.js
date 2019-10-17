@@ -3,10 +3,10 @@ exports.up = function (knex) {
     return knex.schema.createTable("controller_settings", t => {
         t.bigIncrements("id");
         t.string("field");
-        t.integer("value")
+        t.float("value")
         t.integer('controller_id');
         t.foreign('controller_id').references('controllers.id');
-        t.timestamp("createdAt").defaultTo(knex.fn.now());
+        t.timestamp;
     })
 };
 

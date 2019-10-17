@@ -17,9 +17,9 @@ module.exports = {
             }).then((devicesData) => {
                 return knex("sensors")
                     .select("*")
-                    .where({ device_id: devicesData[0].id, type: params.sensor })
+                    .where({ device_id: devicesData[0].id, name: params.sensor })
             }).then((sensorsData) => {
-                knex("reading")
+                knex("readings")
                     .insert([
                         {
                             value: params.value,
@@ -35,24 +35,26 @@ module.exports = {
             });
     },
     async lastReading(sensor_id) {
-        const reading = await knex("reading")
-            .select("value", "time")
-            .where({ id: sensor_id });
-            console.log(reading)
+        const reading = await knex("readings")
+            .select("value", "time", "sensor_id")
+            .where({ sensor_id: sensor_id })
+            .orderBy("time", "desc")
+            .limit(1)
         return reading;
-
     },
     async allReadings(sensor_id) {
-        const readings = await knex('reading')
+        const readings = await knex('readings')
             .select("*")
             .where({ sensor_id: sensor_id })
+            .orderBy("time")
             .limit(24);
         return readings;
-
     },
-    async  currentReading(name, ip) {
-        const url = `${ip}/sensors/colour/${name}`
-        const currentTemp = await axios.get(`${url}`)
+    async  currentReading(name, device) {
+        const url = `http://${device.IPaddress}/sensors/${device.name}/${name}`;
+        console.log("url: ", url)
+        const currentTemp = await axios.get(url);
+        console.log(currentTemp)
         const value = await this.getValue(currentTemp.data);
         return value;
     },
@@ -67,4 +69,21 @@ module.exports = {
             .where({ device_id: device_id });
         return sensorData;
     },
+    async getSensorFromId(sensor_id) {
+        const sensorData = await knex("sensors")
+            .select("*")
+            .where({ id: sensor_id });
+        return sensorData[0];
+    },
+
+    async getSensorsReading(sensorsArray) {
+        let readings = await sensorsArray.map(async sensor => {
+            const reading = await this.allReadings(sensor.id);
+            console.log("in the map =>", reading)
+            return reading;
+        });
+        console.log(readings);
+        return await readings;
+
+    }
 }

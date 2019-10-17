@@ -27,7 +27,7 @@ const knex = require('../../client')
 //     .then((data) => {
 //         console.log(data[0].id)
 //         return knex('devices').insert([
-//           { name: 'mcp1', node_id: data[0].id, IPaddress: '192.168.0.202' },
+//           { name: 'mcp1', description: "HVAC device for rv", node_id: data[0].id, IPaddress: '192.168.0.202', type: "huzzah" },
 //         ]).then((data) => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -41,7 +41,7 @@ const knex = require('../../client')
 //         devices_id = data[0].id
 //         knex("sensors")
 //             .insert([
-//                 { type: "temperature", device_id: devices_id },
+//                 { name: "temperature", type: "temperature", maxValue: "125.000", minValue: "-40.000", unit: "C", device_id: devices_id },
 //             ]).returning('*').then((e) => {
 //                 console.log(e)
 //                 knex.destroy();
