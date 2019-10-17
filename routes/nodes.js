@@ -138,7 +138,6 @@ router.get('/device/:id/sensors/readings', async (req, res) => {
     const allReadings = await SensorsQuery.getSensorsReading(sensorsData)
     console.log("allReadings ", allReadings)
     res.send(allReadings)
-
 });
 //  get last reading of a sensor in db
 
@@ -146,8 +145,8 @@ router.get('/sensor/:id/reading', async (req, res) => {
     const sensor_id = req.params.id;
     const reading = await SensorsQuery.lastReading(sensor_id);
     res.send(reading)
-
 });
+
 
 // Controller 
 
@@ -170,12 +169,9 @@ router.get('/sensor/:id/current', async (req, res) => {
 
     const sensor_id = req.params.id;
     const sensorData = await SensorsQuery.getSensorFromId(sensor_id);
-    // const deviceIp = await DeviceQuery.getDeviceIp(sensorData.device_id);
     const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
-
-
     const reading = await SensorsQuery.currentReading(sensorData.name, deviceData[0])
-    console.log(reading)
+    console.log("reading ", reading)
     res.send(reading);
 
 })

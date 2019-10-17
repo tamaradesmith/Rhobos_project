@@ -51,10 +51,8 @@ module.exports = {
         return readings;
     },
     async  currentReading(name, device) {
-        const url = `http://${device.IPaddress}/sensors/${device.name}/${name}`;
-        console.log("url: ", url)
+        const url = `http://${device.IPaddress}/api/sensors/${device.name}/${name}`;
         const currentTemp = await axios.get(url);
-        console.log(currentTemp)
         const value = await this.getValue(currentTemp.data);
         return value;
     },
