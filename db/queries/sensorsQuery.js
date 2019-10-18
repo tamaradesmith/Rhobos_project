@@ -46,7 +46,7 @@ module.exports = {
         const readings = await knex('readings')
             .select("*")
             .where({ sensor_id: sensor_id })
-            .orderBy("time")
+            .orderBy("time", "desc")
             .limit(24);
         return readings;
     },
@@ -75,11 +75,11 @@ module.exports = {
     },
 
     async getSensorsReading(sensorsArray) {
-        let readings = await sensorsArray.map(async sensor => {
+        let readings = await Promise.all(sensorsArray.map(async sensor => {
             const reading = await this.allReadings(sensor.id);
             console.log("in the map =>", reading)
             return reading;
-        });
+        }));
         console.log(readings);
         return await readings;
 
