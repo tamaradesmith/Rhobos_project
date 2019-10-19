@@ -18,49 +18,6 @@ const DeviceQuery = require('../db/queries/deviceQuery.js')
 
 
 
-// Landing Page
-
-// router.get('/', (req, res) => {
-//     res.render('rv/chart', {
-//         reading: '',
-//     });
-// })
-
-
-
-// Node page DSSS
-
-// router.get('/dsss', (req, res) => {
-//     knex("nodes")
-//         .select("id")
-//         .where({ name: "dsss" })
-//         .then((data) => {
-//             return knex("devices")
-//                 .select("id")
-//                 .where({ node_id: data[0].id, name: "colour" })
-//         }).then((data) => {
-//             return knex("sensors")
-//                 .select("id")
-//                 .where({ device_id: data[0].id, type: "red" })
-//         }).then((data) => {
-//             return knex("reading")
-//                 .select("*")
-//                 .where({ sensor_id: data[0].id })
-//                 .orderBy('createdAt', 'desc')
-//                 .limit(1)
-//         }).then((data) => {
-//             const reading = data[0]
-//             res.render('rv/chart', {
-//                 reading: data[0]
-//             });
-//             // res.send({reading: data[0]});
-
-//         })
-// });
-
-
-
-
 
 
 
@@ -160,6 +117,14 @@ router.get('/controller/:id/boolean', async (req, res) => {
     res.send( "finished")
 })
 
+router.get('/devices/:id/controllers/state', async (req, res ) =>{
+    const device_id = req.params.id;
+    const deviceIp = await DeviceQuery.getDeviceIp(device_id);
+    const allControllers = await ControllersQuery.getControllerByDevice(device_id);
+    const controllersState = await Controller.getControllersStates(deviceIp, allControllers);
+    res.send(controllersState);
+})
+
 
 // Information routes
 
@@ -171,7 +136,6 @@ router.get('/sensor/:id/current', async (req, res) => {
     const sensorData = await SensorsQuery.getSensorFromId(sensor_id);
     const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
     const reading = await SensorsQuery.currentReading(sensorData.name, deviceData[0])
-    console.log("reading ", reading)
     res.send(reading);
 
 })

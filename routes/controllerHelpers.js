@@ -9,6 +9,11 @@ module.exports = {
     });
     return "finished"
   },
+  async getControllerURLData(deviceIp, controllerName){
+  const url = deviceIp + `/controllers/processor/${controllerName}`;
+  const stateParams = await axios.get(url);
+  return stateParams.data;
+  },
   getValue(data) {
     const start = data.indexOf("<value>");
     const end = data.indexOf("</value>");
@@ -21,5 +26,16 @@ module.exports = {
     const state = (parseFloat(currentstate) !== 0) ? 0 : 1;
     await this.booleanOpp(url + `/${state}`)
     return 'controller toggled'
+  },
+  async getControllersStates(deviceIp, controllersArray){
+    let states = await Promise.all(controllersArray.map(async controller =>{
+      const controllerData = await this.getControllerURLData(deviceIp, controller.name)
+      
+      const value = await this.getValue(controllerData)
+      controller.value = value
+      return controller
+    }))
+    return states
   }
+
 }

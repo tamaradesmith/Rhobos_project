@@ -17,6 +17,5 @@ module.exports = {
             .where({ id: controller_id });
         return controllerData[0];
     },
-    
 
 }

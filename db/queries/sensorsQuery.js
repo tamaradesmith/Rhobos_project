@@ -77,10 +77,12 @@ module.exports = {
     async getSensorsReading(sensorsArray) {
         let readings = await Promise.all(sensorsArray.map(async sensor => {
             const reading = await this.allReadings(sensor.id);
-            console.log("in the map =>", reading)
+           await reading.map(async read =>{
+                read.sensor = sensor.name
+            })
             return reading;
         }));
-        console.log(readings);
+
         return await readings;
 
     }
