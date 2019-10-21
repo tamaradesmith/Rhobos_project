@@ -4,7 +4,6 @@ exports.up = function (knex) {
     t.bigIncrements("id");
     t.string("name");
     t.text("description");
-    t.string("IPaddress");
     t.string("type");
     t.integer('node_id');
     t.foreign('node_id').references('nodes.id');

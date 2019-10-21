@@ -3,7 +3,7 @@ const knex = require('../../client')
 
 
 // {
-//   node: 'dsss',
+//   node: 'hvac',
 //     device: 'mcp1',
 //       sensor: 'temperature',
 //         date: '2019/10/09 18:31:30',
@@ -13,7 +13,7 @@ const knex = require('../../client')
 
 
 // knex("nodes")
-//     .insert({name: "dsss"})
+//     .insert({ name: "hvac", description: "HVAC control and monitoring node", IPaddress: '192.168.0.202', type: "huzzah"})
 //     .then(() => {
 //         knex.destroy()
 //         console.log("finished Nodes")
@@ -23,11 +23,11 @@ const knex = require('../../client')
 
 // knex('nodes')
 //     .select('id')
-//     .where({ name: "dsss" })
+//     .where({ name: "hvac" })
 //     .then((data) => {
 //         console.log(data[0].id)
 //         return knex('devices').insert([
-//           { name: 'mcp1', description: "HVAC device for rv", node_id: data[0].id, IPaddress: '192.168.0.202', type: "huzzah" },
+//             { name: 'inside', description: "Inside monitoring sensor", node_id: data[0].id, type: "mcp90808" }, { name: 'outside', description: "outdoor monitoring sensor", node_id: data[0].id, type: "mcp90808" }, { name: 'processor', description: "processor for fan, heater and cooler units", node_id: data[0].id, type: "" }
 //         ]).then((data) => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -36,7 +36,7 @@ const knex = require('../../client')
 
 // knex('devices')
 //     .select('id')
-//     .where({ name: "mcp1" })
+//     .where({ name: "inside" })
 //     .then((data) => {
 //         devices_id = data[0].id
 //         knex("sensors")
@@ -51,17 +51,54 @@ const knex = require('../../client')
 
 // knex('devices')
 //     .select('id')
-//     .where({ name: "mcp1" })
+//     .where({ name: "outside" })
 //     .then((data) => {
 //         devices_id = data[0].id
-//         knex("controllers")
+//         knex("sensors")
 //             .insert([
-//               { type: "pump", device_id: devices_id },
-//                 { type: "green", device_id: devices_id },
-
-//             ]).returning('type').then((e) => {
+//                 { name: "temperature", type: "temperature", maxValue: "125.000", minValue: "-40.000", unit: "C", device_id: devices_id },
+//             ]).returning('*').then((e) => {
 //                 console.log(e)
 //                 knex.destroy();
 //             })
 //     })
 
+
+// knex('nodes')
+//     .select('id')
+//     .where({ name: "hvac" })
+//     .then((data) => {
+//         knex('devices')
+//             .select('id')
+//             .where({ node_id: data[0].id, name: "processor" })
+//             .then((data) => {
+//                 devices_id = data[0].id
+//                 knex("controllers")
+//                     .insert([
+//                         { name: "ac", type: "boolean", device_id: devices_id },
+//                         { name: "heater", type: "boolean", device_id: devices_id },
+//                         { name: "fan", type: "boolean", device_id: devices_id },
+
+//                     ]).returning('type').then((e) => {
+//                         console.log(e)
+//                         knex.destroy();
+//                     })
+//             })
+//         })
+
+
+// knex('contro')
+// .where("id", 8)
+// .update({name: "inside"})
+// .then(data =>{
+//   console.log(data);
+//   knex.destroy()
+// })
+
+knex('controllers')
+.where("id", 10)
+.delete()
+.then(data =>{
+  console.log(data);
+  knex.destroy()
+})

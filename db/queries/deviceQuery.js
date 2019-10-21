@@ -14,11 +14,18 @@ module.exports = {
             .select("*");
         return devicesData;
     },
-    async getDeviceIp(id) {
-        const devicesIP = await knex('devices')
-            .select('IPaddress')
-            .where({ id: id });
-        return `http://${devicesIP[0].IPaddress}/api`;
+    async getDevicesByNode(nodeId) {
+        const nodeData = await knex("devices")
+            .select("*")
+            .where({node_id: nodeId})
+        return nodeData;
+    },
+    async getNodeId(deviceId) {
+        const nodeId = await knex('devices')
+            .select('node_id')
+            .where({ id: deviceId })
+            .limit(1)
+        return nodeId[0].node_id
     },
 }
 

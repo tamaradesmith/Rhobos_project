@@ -4,6 +4,8 @@ exports.up = function (knex) {
     t.bigIncrements("id");
     t.string("name");
     t.text("description");
+    t.string("type");
+    t.string("IPaddress");
     t.timestamp
   })
 };

@@ -2,14 +2,15 @@ const knex = require('../../client')
 
 
 // {
-//     node: 'dsss',
+//     node: 'garden',
 //         device: 'colour',
 //             sensor: 'red',
 //                 date: '2019/09/18 19:01:30',
 //                     value: '3255.000'
 // }
+
 // knex("nodes")
-//   .insert({ name: "dsss", description: "Over Blown Home environment moniteering and contral system node" })
+//   .insert({ name: "garden", IPaddress: "192.168.0.201", description: "Decorative garden node with light and water features", type: "huzzah" })
 //   .then(() => {
 //     knex.destroy()
 //     console.log("finished Nodes")
@@ -19,11 +20,11 @@ const knex = require('../../client')
 
 // knex('nodes')
 //     .select('id')
-//     .where({ name: "dsss" })
+//     .where({ name: "garden" })
 //     .then((nodeData) => {
 //         console.log(nodeData[0].id)
 //         return knex('devices').insert([
-//             { name: 'colour', node_id: nodeData[0].id, IPaddress: "192.168.0.201", description: "decorative garden device for lights and water feature", type: "huzzah" },
+//           { name: 'colour', node_id: nodeData[0].id, description: "light and colour sensor", type: "tcs34725 rgb sensor" }, { name: 'processor', node_id: nodeData[0].id, description: "controller for pump and led", type: "unknown" }
 //         ]).then(() => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -44,7 +45,7 @@ const knex = require('../../client')
 //                 { name: "lux", type: "range", minValue: "0.000", maxValue: "1023.000", device_id: devices_id },
 //                 { name: "cct", type: "range", minValue: "0.000", maxValue: "100000.000", device_id:  devices_id },
 //             ]).then((data) => {
-//                 console.log(data)
+//                 console.log(data.name)
 //                 knex.destroy();
 //             })
 //     })
@@ -52,7 +53,7 @@ const knex = require('../../client')
 
 // knex('devices')
 //   .select('id')
-//   .where({ name: "colour" })
+//   .where({ name: "processor" })
 //   .then((data) => {
 //     devices_id = data[0].id
 //     knex("controllers")

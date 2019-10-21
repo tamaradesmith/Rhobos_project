@@ -4,8 +4,17 @@ const knex = require('../../client');
 // controller Queries
 
 module.exports = {
-    
-    async getControllerByDevice(device_id){
+    async getControllerByNode(nodeId) {
+        const devices = await knex("devices")
+            .select("*")
+            .where({ node_id: nodeId });
+        const controllersData = await Promise.all(devices.map(async (device)=> {
+            const controller = await this.getControllerByDevice(device.id)
+            return controller;
+        }))
+        return controllersData;
+    },
+    async getControllerByDevice(device_id) {
         const controllersData = await knex("controllers")
             .select("*")
             .where({ device_id: device_id });

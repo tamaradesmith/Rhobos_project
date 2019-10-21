@@ -61,11 +61,32 @@ module.exports = {
         const end = data.indexOf("</value>");
         return data.substring(start + 7, end);
     },
+    async getSensorsByNode(node_id) {
+        const deviceData = await knex("devices")
+            .select("*")
+            .where({ node_id: node_id });
+        const sensorsData = await Promise.all(deviceData.map(async device => {
+            const sensor = await this.getSensorsByDevice(device.id)
+            return sensor;
+        }))
+        return sensorsData;
+
+    },
     async getSensorsByDevice(device_id) {
         const sensorData = await knex("sensors")
             .select("*")
             .where({ device_id: device_id });
         return sensorData;
+    },
+    async getSensorsfromDevices(deviceArray) {
+        const sensorData = await Promise.all(deviceArray.map(async device => {
+            const sensors = await this.getSensorsByDevice(device.id);
+            await sensors.map( async sensor => {
+                sensor.device = device.name
+            })
+            return sensors;
+        }))
+        return sensorData.flat()
     },
     async getSensorFromId(sensor_id) {
         const sensorData = await knex("sensors")
@@ -73,17 +94,29 @@ module.exports = {
             .where({ id: sensor_id });
         return sensorData[0];
     },
-
     async getSensorsReading(sensorsArray) {
+        sensorsArray = sensorsArray.flat();
+        console.log(sensorsArray)
         let readings = await Promise.all(sensorsArray.map(async sensor => {
             const reading = await this.allReadings(sensor.id);
-           await reading.map(async read =>{
+            await reading.map(async read => {
+                read.sensor = (sensor.type !== "temperature") ?  sensor.name : `${sensor.device} ${sensor.name}`;
+                read.device = sensor.device;
+            })
+            return reading;
+        }));
+        return readings;
+    },
+    async lastReadingAllSensors(sensorArray) {
+       sensorArray = sensorArray.flat();
+        let readings = await Promise.all(sensorArray.map(async sensor => {
+            const reading = await this.lastReading(sensor.id);
+            await reading.map(async read => {
                 read.sensor = sensor.name
             })
             return reading;
         }));
-
-        return await readings;
-
-    }
+        readings= readings.flat();
+        return readings;
+    },
 }

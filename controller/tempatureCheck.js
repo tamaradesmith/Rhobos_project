@@ -5,30 +5,14 @@ const airCon = "http://192.168.0.201/api/controllers/processor/blue/";
 
 
 module.exports =  (data) => {
-    console.log(data.value);
-    const tempature = data.value;
-    if (tempature < 400 ){
+    console.log("current reading", data.value);
+    const temperature = data.value;
+    if (temperature > 22){
+            return "warm"
 
-        axios.post(heater + '1', {
-            withCredentials: true
-        });
-        axios.post(airCon + '0', {
-            withCredentials: true
-        });
-
-    } else if (tempature >= 400  && tempature < 810 ){
-        axios.post(airCon + '0', {
-            withCredentials: true
-        });
-        axios.post(heater + '0', {
-            withCredentials: true
-        });
+    } else if (temperature >= 20 && temperature < 22 ){
+        return "room"
     } else {
-        axios.post(airCon + '1', {
-            withCredentials: true
-        });
-        axios.post(heater + '0', {
-            withCredentials: true
-        });
+        return "cold"
     }
 }
