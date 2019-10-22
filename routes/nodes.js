@@ -35,7 +35,7 @@ router.post('/sensors/readings', (req, res) => {
         date: req.body.date,
         value: req.body.value
     };
-    // SensorsQuery.saveSensorReading(postParams)
+    SensorsQuery.saveSensorReading(postParams)
     Sensor.bussnessLogic(postParams);
     res.send(postParams.sensor)
 });
@@ -48,7 +48,7 @@ router.post('/sensors/readings', (req, res) => {
 
 // get one node
 
-router.get('/nodes/:id', async (req, res) =>{
+router.get('/nodes/:id', async (req, res) => {
     const nodeId = req.params.id
     const nodeData = await NodeQuery.getOne(nodeId)
     res.send(nodeData)
@@ -62,7 +62,7 @@ router.get('/nodes', async (req, res) => {
 });
 
 // get all Devices on one Node
-router.get('/nodes/:id/devices', async (req, res) =>{
+router.get('/nodes/:id/devices', async (req, res) => {
 
     const nodeId = req.params.id
     const deviceData = await DeviceQuery.getDevicesByNode(nodeId);
@@ -149,7 +149,6 @@ router.get('/sensor/:id/reading', async (req, res) => {
 router.get('/nodes/:id/sensors/reading', async (req, res) => {
     const nodeId = req.params.id;
     const devices = await DeviceQuery.getDevicesByNode(nodeId);
-    // console.log(deivces)
     const sensorsData = await SensorsQuery.getSensorsfromDevices(devices);
     const reading = await SensorsQuery.lastReadingAllSensors(sensorsData);
     res.send(reading)
@@ -182,14 +181,16 @@ router.get('/nodes/:id/controllers/state', async (req, res) => {
 
 // Information routes
 
-// Current Tempature
+// Current sensor reading
 
 router.get('/sensor/:id/current', async (req, res) => {
-
-    const sensor_id = req.params.id;
-    const sensorData = await SensorsQuery.getSensorFromId(sensor_id);
-    const deviceData = await DeviceQuery.getOneDevice(sensorData.deviceId)
-    const reading = await SensorsQuery.currentReading(sensorData.name, deviceData[0])
+    const sensorId = req.params.id;
+    const sensorData = await SensorsQuery.getSensorFromId(sensorId);
+    const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
+    const nodeId = await DeviceQuery.getNodeId(sensorData.device_id)
+    const nodeIp = await NodeQuery.getNodeIp(nodeId)
+ 
+    const reading = await SensorsQuery.currentReading(sensorData, deviceData[0], nodeIp)
     res.send(reading);
 
 })

@@ -1,18 +1,27 @@
-const axios = require('axios');
 
-const heater = "http://192.168.0.201/api/controllers/processor/red/";
-const airCon = "http://192.168.0.201/api/controllers/processor/blue/";
+const Controller = require('../routes/controllerHelpers');
 
+module.exports = (data) => {
 
-module.exports =  (data) => {
-    console.log("current reading", data.value);
     const temperature = data.value;
-    if (temperature > 22){
-            return "warm"
 
-    } else if (temperature >= 20 && temperature < 22 ){
-        return "room"
-    } else {
-        return "cold"
+    switch (true) {
+        case temperature > 22:
+            Controller.turnOnAircon(data);
+            return "warm"
+        case temperature > 21:
+            Controller.turnOffHeat(data)
+            return "heaterOff"
+        case temperature > 20:
+            Controller.turnOffAll(data);
+            return "room";
+        case temperature > 19:
+            Controller.turnOffAircon(data)
+            return "acOff"
+        default:
+            Controller.turnOnHeat(data)
+            return "cold"
     }
 }
+
+

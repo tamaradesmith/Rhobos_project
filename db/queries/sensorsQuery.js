@@ -50,10 +50,10 @@ module.exports = {
             .limit(24);
         return readings;
     },
-    async  currentReading(name, device) {
-        const url = `http://${device.IPaddress}/api/sensors/${device.name}/${name}`;
-        const currentTemp = await axios.get(url);
-        const value = await this.getValue(currentTemp.data);
+    async  currentReading(sensor, device, nodeIp) {
+        const url = `${nodeIp}/sensors/${device.name}/${sensor.name}`;
+        const currentRead= await axios.get(url);
+        const value = await this.getValue(currentRead.data);
         return value;
     },
     getValue(data) {
@@ -96,7 +96,6 @@ module.exports = {
     },
     async getSensorsReading(sensorsArray) {
         sensorsArray = sensorsArray.flat();
-        console.log(sensorsArray)
         let readings = await Promise.all(sensorsArray.map(async sensor => {
             const reading = await this.allReadings(sensor.id);
             await reading.map(async read => {
