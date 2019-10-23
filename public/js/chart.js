@@ -10,7 +10,6 @@ const knex = require("../../client")
                 result.push({ temperature: element.temperature, time: element.createdAt })
             })
             knex.destroy()
-            // console.log(result)
             callback(result)
         })
 

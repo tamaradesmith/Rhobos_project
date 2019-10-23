@@ -26,5 +26,12 @@ module.exports = {
             .where({ id: controller_id });
         return controllerData[0];
     },
+    async getDefaultShow(controller){
+        const defautShow = await knex("lightshows")
+        .select("*")
+        .where({controller_id: controller, default: true})
+        .limit(1)
+        return defautShow[0];
+    }
 
 }

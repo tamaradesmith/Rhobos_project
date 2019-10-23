@@ -1,6 +1,7 @@
 const knex = require('../client');
 const axios = require('axios');
 const NodeQuery = require('../db/queries/nodeQuery')
+const ControllerQuery = require('../db/queries/controllersQuery')
 
 module.exports = {
 
@@ -11,8 +12,7 @@ module.exports = {
     return "finished"
   },
   async getControllerURLData(NodeIp, controllerName) {
-    const url = NodeIp + `/controllers/processor/${controllerName}`;
-
+    const url = `${NodeIp}/controllers/processor/${controllerName}`;
     const stateParams = await axios.get(url);
     return await stateParams.data;
   },
@@ -23,12 +23,21 @@ module.exports = {
   },
 
   async toggleState(nodeIp, controller) {
-    const url = nodeIp + `/controllers/processor/${controller}`
+    const url = `${nodeIp}/controllers/processor/${controller}`
     const stateParams = await axios.get(url)
     const currentstate = await this.getValue(stateParams.data)
     const state = (parseFloat(currentstate) !== 0) ? 0 : 1;
-    await this.booleanOpp(url + `/${state}`)
+    await this.booleanOpp(`${url}/${state}`)
     return 'controller toggled'
+  },
+  async lightshowToggle(nodeIp, controllerData) {
+    const defaultShow = await ControllerQuery.getDefaultShow(controllerData.id);
+    const url = `${nodeIp}/colourapp/shows/${defaultShow.name}/active`;
+    const stateParams = await axios.get(url);
+    const currentstate = await this.getValue(stateParams.data);
+    const state = (currentstate !== 'On') ? "On" : "Off";
+    await this.booleanOpp(`${url}/${state}`);
+    return 'lighting show toggled'
   },
   async getControllersStates(nodeIp, controllersArray) {
     controllersArray = controllersArray.flat()
@@ -43,13 +52,14 @@ module.exports = {
           } catch (error) {
             rej(error)
           }
-        }, (i + 1) * 500 );
+        }, (i + 1) * 400);
       })
     })).catch(err => { console.log("getState error: ", err.messages) })
     return states
   },
-
   // bussenss logic functions
+
+  //  Temperature
   async turnOnAircon(sensorData) {
     const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
     const controller = "ac";
@@ -79,8 +89,45 @@ module.exports = {
   turnOffAll(sensorData) {
     this.turnOffAircon(sensorData);
     this.turnOffHeat(sensorData);
-
   },
 
+  // Light Levels
+  async turnAllFeaturesOff(sensorData) {
+    console.log("turning off")
+    this.turnOffLights(sensorData);
+    setTimeout(() => {
+      this.turnOffWaterFeature(sensorData);
+    }, 1000);
+  },
+  async turnOnLights(sensorData) {
+    console.log("turning on lights")
+    const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
+    const light = "test";
+    const url = `${nodeIp}/colourapp/shows/${light}/active/On`;
+    this.booleanOpp(url);
+  },
+  async turnOnWaterFeature(sensorData) {
+    console.log("turning on water")
+    const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
+    const controller = "pump";
+    const url = `${nodeIp}/controllers/processor/${controller}/1`;
+    this.booleanOpp(url);
+  },
+  async turnOffLights(sensorData) {
+    console.log("turning lights off")
+    const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
+    const light = "test";
+    const url = `${nodeIp}/colourapp/shows/${light}/active/Off`;
+    console.log(url)
+    this.booleanOpp(url);
+  },
+  async turnOffWaterFeature(sensorData) {
+    console.log("turning water off")
+    const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
+    const controller = "pump";
+    const url = `${nodeIp}/controllers/processor/${controller}/0`;
+    console.log("pump url", url)
+    // this.booleanOpp(url);
+  },
 
 }

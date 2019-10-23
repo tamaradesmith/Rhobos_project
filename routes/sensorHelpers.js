@@ -7,12 +7,12 @@ module.exports = {
 
   async bussnessLogic(sensorReading) {
     if (sensorReading.sensor === 'lux') {
-      console.log("lux");
       const check = lightLevel(sensorReading)
+      console.log("Light reply: ", check)
 
     } else if (sensorReading.sensor === "temperature" && sensorReading.device === "inside") {
       const check = TemperatureCheck(sensorReading);
-      console.log("reply: ", check);
+      console.log("Temperature reply: ", check);
     }
   },
 

@@ -56,14 +56,12 @@ router.get('/nodes/:id', async (req, res) => {
 
 // get all Nodes
 router.get('/nodes', async (req, res) => {
-
     const nodesData = await NodeQuery.getAll();
     res.send(nodesData);
 });
 
 // get all Devices on one Node
 router.get('/nodes/:id/devices', async (req, res) => {
-
     const nodeId = req.params.id
     const deviceData = await DeviceQuery.getDevicesByNode(nodeId);
     res.send(deviceData)
@@ -164,7 +162,9 @@ router.get('/controller/:id/boolean', async (req, res) => {
     const controllerData = await ControllersQuery.getControllerFromId(controllerId)
     const nodeId = await DeviceQuery.getNodeId(controllerData.device_id)
     const nodeIp = await NodeQuery.getNodeIp(nodeId);
-    await Controller.toggleState(nodeIp, controllerData.name)
+    (controllerData.type !== "led") ?
+    await Controller.toggleState(nodeIp, controllerData.name) :
+    await Controller.lightshowToggle(nodeIp, controllerData)
     res.send("finished")
 })
 
@@ -189,7 +189,7 @@ router.get('/sensor/:id/current', async (req, res) => {
     const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
     const nodeId = await DeviceQuery.getNodeId(sensorData.device_id)
     const nodeIp = await NodeQuery.getNodeIp(nodeId)
- 
+
     const reading = await SensorsQuery.currentReading(sensorData, deviceData[0], nodeIp)
     res.send(reading);
 

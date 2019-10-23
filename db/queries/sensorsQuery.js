@@ -52,7 +52,7 @@ module.exports = {
     },
     async  currentReading(sensor, device, nodeIp) {
         const url = `${nodeIp}/sensors/${device.name}/${sensor.name}`;
-        const currentRead= await axios.get(url);
+        const currentRead = await axios.get(url);
         const value = await this.getValue(currentRead.data);
         return value;
     },
@@ -67,10 +67,12 @@ module.exports = {
             .where({ node_id: node_id });
         const sensorsData = await Promise.all(deviceData.map(async device => {
             const sensor = await this.getSensorsByDevice(device.id)
+            if (sensor[0]) {
+                sensor[0].device = device.name;
+            }
             return sensor;
         }))
         return sensorsData;
-
     },
     async getSensorsByDevice(device_id) {
         const sensorData = await knex("sensors")
@@ -81,7 +83,7 @@ module.exports = {
     async getSensorsfromDevices(deviceArray) {
         const sensorData = await Promise.all(deviceArray.map(async device => {
             const sensors = await this.getSensorsByDevice(device.id);
-            await sensors.map( async sensor => {
+            await sensors.map(async sensor => {
                 sensor.device = device.name
             })
             return sensors;
@@ -99,7 +101,7 @@ module.exports = {
         let readings = await Promise.all(sensorsArray.map(async sensor => {
             const reading = await this.allReadings(sensor.id);
             await reading.map(async read => {
-                read.sensor = (sensor.type !== "temperature") ?  sensor.name : `${sensor.device} ${sensor.name}`;
+                read.sensor = (sensor.type !== "temperature") ? sensor.name : `${sensor.device} ${sensor.name}`;
                 read.device = sensor.device;
             })
             return reading;
@@ -107,7 +109,7 @@ module.exports = {
         return readings;
     },
     async lastReadingAllSensors(sensorArray) {
-       sensorArray = sensorArray.flat();
+        sensorArray = sensorArray.flat();
         let readings = await Promise.all(sensorArray.map(async sensor => {
             const reading = await this.lastReading(sensor.id);
             await reading.map(async read => {
@@ -115,7 +117,7 @@ module.exports = {
             })
             return reading;
         }));
-        readings= readings.flat();
+        readings = readings.flat();
         return readings;
     },
 }
