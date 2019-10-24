@@ -4,31 +4,31 @@ module.exports = (data) => {
   const level = data.value;
 
   setTimeout(() => {
-  switch (true) {
-    case level < 10:
-      Controller.turnAllFeaturesOff(data);
-      return "pitchBlack";
+    switch (true) {
+      case level < 10:
+        Controller.turnAllFeaturesOff(data);
+        return "pitchBlack";
       case level < 50:
         Controller.turnAllFeaturesOff(data);
         return "dark";
-        case level < 400:
-          Controller.turnOnLights(data);
-          return "dim";
-          case level < 1000:
-            Controller.turnOnWaterFeature(data);
-            Controller.turnOffLights(data);
-            return "normal";
-            case level < 5000:
-              Controller.turnOffLights(data);
-              return "bright";
-              case level < 10000:
-                Controller.turnOffLights(data);
-                return "cloudy";
-                default:
-                  Controller.turnOffLights(data);
-                  return "Sunny";
-                };
-              }, 5000);
+      case level < 400:
+        Controller.turnOnLights(data);
+        return "dim";
+      case level < 1000:
+        Controller.turnOnWaterFeature(data);
+        Controller.turnOffLights(data);
+        return "normal";
+      case level < 5000:
+        Controller.turnOffLights(data);
+        return "bright";
+      case level < 10000:
+        Controller.turnOffLights(data);
+        return "cloudy";
+      default:
+        Controller.turnOffLights(data);
+        return "Sunny";
+    };
+  }, 5000);
 };
 
 

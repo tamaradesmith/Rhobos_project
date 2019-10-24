@@ -75,7 +75,7 @@ const knex = require('../../client')
 //     .then((nodeData) => {
 //         console.log(nodeData[0].id)
 //         return knex('devices').insert([
-//           { name: 'colourapp', node_id: nodeData[0].id, description: "Decorative lighting feature", type: "led" }, 
+//           { name: 'colourapp', node_id: nodeData[0].id, description: "Decorative lighting feature", type: "LED" }, 
 //         ]).then(() => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -96,19 +96,19 @@ const knex = require('../../client')
 //       })
 //   }) 
 
-knex('controllers')
-  .select('id')
-  .where({ name: "show" })
-  .then((data) => {
-    controller_id = data[0].id
-    knex("lightshows")
-      .insert([
-        { name: "test", default: "true",controller_id: controller_id },
-        { name: "red", default: "false", controller_id: controller_id },
-        { name: "blue", default: "false", controller_id: controller_id },
-        { name: "green", default: "false", controller_id: controller_id },
-      ]).returning('name').then((e) => {
-        console.log(e)
-        knex.destroy();
-      })
-  })
+// knex('controllers')
+//   .select('id')
+//   .where({ name: "show" })
+//   .then((data) => {
+//     controller_id = data[0].id
+//     knex("lightshows")
+//       .insert([
+//         { name: "test", default: "true",controller_id: controller_id },
+//         { name: "red", default: "false", controller_id: controller_id },
+//         { name: "blue", default: "false", controller_id: controller_id },
+//         { name: "green", default: "false", controller_id: controller_id },
+//       ]).returning('name').then((e) => {
+//         console.log(e)
+//         knex.destroy();
+//       })
+//   })

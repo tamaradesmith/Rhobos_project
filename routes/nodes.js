@@ -162,7 +162,7 @@ router.get('/controller/:id/boolean', async (req, res) => {
     const controllerData = await ControllersQuery.getControllerFromId(controllerId)
     const nodeId = await DeviceQuery.getNodeId(controllerData.device_id)
     const nodeIp = await NodeQuery.getNodeIp(nodeId);
-    (controllerData.type !== "led") ?
+    (controllerData.type.toLowerCase() !== "led") ?
     await Controller.toggleState(nodeIp, controllerData.name) :
     await Controller.lightshowToggle(nodeIp, controllerData)
     res.send("finished")
@@ -176,8 +176,24 @@ router.get('/nodes/:id/controllers/state', async (req, res) => {
     const allControllers = await ControllersQuery.getControllerByNode(nodeId);
     const controllersState = await Controller.getControllersStates(nodeIp, allControllers);
     res.send(controllersState);
-})
+});
 
+// get Light Shows
+
+router.get('/controllers/:id/shows', async (req, res) =>{
+const controllerId = req.params.id;
+const shows =await ControllersQuery.getLightShows(controllerId);
+res.send(shows);
+});
+
+// Change default light show
+
+router.get('/controller/lightshow/:id/change', (req, res) => {
+    const showId = req.params.id;
+    ControllersQuery.changeDefaultShow(showId);
+    console.log("TCL: changing show", "changing show")
+    res.send("changing show")
+})
 
 // Information routes
 
