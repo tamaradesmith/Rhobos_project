@@ -76,11 +76,12 @@ router.get('/nodes/:id/sensors', async (req, res) => {
 
 // all sensor readings on one node
 
-router.get('/nodes/:id/sensors/readings', async (req, res) => {
+router.get('/nodes/:id/sensors/readings/:period', async (req, res) => {
     const nodeId = req.params.id;
+    const period = req.params.period
     const deviceData = await DeviceQuery.getDevicesByNode(nodeId);
     const sensorsData = await SensorsQuery.getSensorsfromDevices(deviceData);
-    const allReadings = await SensorsQuery.getSensorsReading(sensorsData)
+    const allReadings = await SensorsQuery.getSensorsReading(sensorsData, period)
     res.send(allReadings)
 });
 

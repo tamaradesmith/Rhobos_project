@@ -14,6 +14,19 @@ module.exports = {
         }))
         return controllersData;
     },
+
+    async getControllerByNodeName(readingData) {
+        const node = await knex("nodes")
+            .select("*")
+            .where({ name: readingData.node });
+        const device = await knex("devices")
+            .select("*")
+            .where({ node_id: node[0].id, type: "led" });
+        const controller = await knex("controllers")
+            .select("*")
+            .where({ device_id: device[0].id, type: "LED" })
+        return controller[0];
+    },
     async getControllerByDevice(device_id) {
         const controllersData = await knex("controllers")
             .select("*")
@@ -37,13 +50,14 @@ module.exports = {
         const shows = await knex("lightshows")
             .select("*")
             .where({ controller_id: controllerId })
+            .orderBy("id", "asc")
         return shows;
     },
     async changeDefaultShow(showId) {
         const show = await knex("lightshows")
             .select("*")
             .where({ id: showId })
-        const allShows = await knex("lightshows")
+        await knex("lightshows")
             .where({ controller_id: show[0].controller_id })
             .update({ default: false })
             .returning("*")
@@ -51,5 +65,10 @@ module.exports = {
             .where({ id: showId })
             .update({ default: true })
         return newDefault;
+    },
+    async getDefaultShowByReading(sensorData) {
+        const controller = await this.getControllerByNodeName(sensorData)
+        const show = await this.getDefaultShow(controller.id)
+        return show;
     },
 }

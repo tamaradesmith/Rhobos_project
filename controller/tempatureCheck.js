@@ -4,6 +4,7 @@ const Controller = require('../routes/controllerHelpers');
 module.exports = (data) => {
 
     const temperature = data.value;
+    console.log("TCL: temperature", temperature)
 
     switch (true) {
         case temperature > 22:

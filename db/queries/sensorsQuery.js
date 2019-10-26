@@ -42,12 +42,12 @@ module.exports = {
             .limit(1)
         return reading;
     },
-    async allReadings(sensor_id) {
+    async allReadings(sensor_id, number) {
         const readings = await knex('readings')
             .select("*")
             .where({ sensor_id: sensor_id })
             .orderBy("time", "desc")
-            .limit(24);
+            .limit(number);
         return readings;
     },
     async  currentReading(sensor, device, nodeIp) {
@@ -96,10 +96,10 @@ module.exports = {
             .where({ id: sensor_id });
         return sensorData[0];
     },
-    async getSensorsReading(sensorsArray) {
+    async getSensorsReading(sensorsArray, number) {
         sensorsArray = sensorsArray.flat();
         let readings = await Promise.all(sensorsArray.map(async sensor => {
-            const reading = await this.allReadings(sensor.id);
+            const reading = await this.allReadings(sensor.id, number);
             await reading.map(async read => {
                 read.sensor = (sensor.type !== "temperature") ? sensor.name : `${sensor.device} ${sensor.name}`;
                 read.device = sensor.device;
