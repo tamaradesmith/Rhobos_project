@@ -2,6 +2,7 @@ const Controller = require('../routes/controllerHelpers');
 
 module.exports = (data) => {
   const level = data.value;
+  console.log("TCL: level", level)
 
   setTimeout(() => {
     switch (true) {
@@ -16,10 +17,15 @@ module.exports = (data) => {
         return "dim";
       case level < 1000:
         Controller.turnOnWaterFeature(data);
-        Controller.turnOffLights(data);
+        setTimeout(() => {
+          Controller.turnOffLights(data);
+        }, 500);
         return "normal";
       case level < 5000:
-        Controller.turnOffLights(data);
+        Controller.turnOnWaterFeature(data)
+        setTimeout(() => {
+          Controller.turnOffLights(data);
+        }, 500);
         return "bright";
       case level < 10000:
         Controller.turnOffLights(data);

@@ -7,16 +7,16 @@ module.exports = (data) => {
     console.log("TCL: temperature", temperature)
 
     switch (true) {
-        case temperature > 22:
+        case temperature > 23.5:
             Controller.turnOnAircon(data);
             return "warm";
-        case temperature > 21:
+        case temperature > 23:
             Controller.turnOffHeat(data)
             return "heaterOff";
-        case temperature > 20:
+        case temperature > 22:
             Controller.turnOffAll(data);
             return "room";
-        case temperature > 19:
+        case temperature > 21:
             Controller.turnOffAircon(data);
             return "acOff";
         default:

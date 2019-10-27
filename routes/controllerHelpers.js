@@ -72,9 +72,9 @@ module.exports = {
   },
   async turnOnHeat(sensorData) {
     const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
-    setTimeout(() => {
-      this.turnOnFan(nodeIp);
-    }, 500);
+    // setTimeout(() => {
+    //   this.turnOnFan(nodeIp);
+    // }, 500);
     const controller = "heater";
     const url = `${nodeIp}/controllers/processor/${controller}/1`;
     this.booleanOpp(url);
@@ -87,6 +87,9 @@ module.exports = {
   },
   async turnOffAircon(sensorData) {
     const nodeIp = await NodeQuery.getNodeIpFromName(sensorData.node);
+     setTimeout(() => {
+      this.turnOffFan(nodeIp);
+    }, 500);
     const controller = "ac";
     const url = `${nodeIp}/controllers/processor/${controller}/0`;
     this.booleanOpp(url);
