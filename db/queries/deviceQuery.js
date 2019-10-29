@@ -11,13 +11,15 @@ module.exports = {
     },
     async getAllDevices() {
         const devicesData = await knex('devices')
-            .select("*");
+            .select("*")
+            .orderBy("id", "asc");
         return devicesData;
     },
     async getDevicesByNode(nodeId) {
         const nodeData = await knex("devices")
             .select("*")
             .where({node_id: nodeId})
+            .orderBy("id", "asc");
         return nodeData;
     },
     async getNodeId(deviceId) {

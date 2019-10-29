@@ -24,7 +24,7 @@ const knex = require('../../client')
 //     .then((nodeData) => {
 //         console.log(nodeData[0].id)
 //         return knex('devices').insert([
-//           { name: 'colour', node_id: nodeData[0].id, description: "light and colour sensor", type: "tcs34725 rgb sensor" }, { name: 'processor', node_id: nodeData[0].id, description: "controller for pump and led", type: "unknown" }
+//           { name: 'colour', node_id: nodeData[0].id, description: "Light and colour sensor", type: "tcs34725 rgb sensor" }, { name: 'processor', node_id: nodeData[0].id, description: "Controller for pump and led", type: "" }
 //         ]).then(() => {
 //             knex.destroy()
 //             console.log("finished device")
@@ -112,3 +112,12 @@ const knex = require('../../client')
 //         knex.destroy();
 //       })
 //   })
+
+
+// knex('lightshows')
+// .where("id", 4)
+//   .update({ name: "blue"})
+// .then((data =>{
+// console.log("TCL: data", data)
+//   knex.destroy()
+// }))

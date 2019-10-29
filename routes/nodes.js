@@ -1,7 +1,6 @@
 const knex = require('../client');
 const express = require('express');
 const router = express.Router();
-// const axios = require('axios');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -17,12 +16,6 @@ const SensorsQuery = require("../db/queries/sensorsQuery");
 const ControllersQuery = require("../db/queries/controllersQuery");
 const NodeQuery = require("../db/queries/nodeQuery");
 const DeviceQuery = require('../db/queries/deviceQuery.js');
-
-
-
-
-
-
 
 
 // Save Readings to DB
@@ -45,7 +38,6 @@ router.post('/sensors/readings', (req, res) => {
 
 // nodes
 
-
 // get one node
 
 router.get('/nodes/:id', async (req, res) => {
@@ -55,12 +47,14 @@ router.get('/nodes/:id', async (req, res) => {
 })
 
 // get all Nodes
+
 router.get('/nodes', async (req, res) => {
     const nodesData = await NodeQuery.getAll();
     res.send(nodesData);
 });
 
 // get all Devices on one Node
+
 router.get('/nodes/:id/devices', async (req, res) => {
     const nodeId = req.params.id
     const deviceData = await DeviceQuery.getDevicesByNode(nodeId);
@@ -68,6 +62,7 @@ router.get('/nodes/:id/devices', async (req, res) => {
 })
 
 // get all Sensors on one Node
+
 router.get('/nodes/:id/sensors', async (req, res) => {
     const nodeId = req.params.id
     const sensorsData = await SensorsQuery.getSensorsByNode(nodeId);
@@ -88,6 +83,7 @@ router.get('/nodes/:id/sensors/readings/:period', async (req, res) => {
 // device
 
 //  get all device
+
 router.get('/devices', async (req, res) => {
     const deviceData = await DeviceQuery.getAllDevices()
     res.send(deviceData);
@@ -101,6 +97,7 @@ router.get(`/device/:id`, async (req, res) => {
 });
 
 // get sensors on one device
+
 router.get(`/devices/:id/sensors`, async (req, res) => {
     const deviceId = req.params.id;
     const sensorsData = await SensorsQuery.getSensorsByDevice(deviceId);
@@ -108,6 +105,7 @@ router.get(`/devices/:id/sensors`, async (req, res) => {
 });
 
 // get Controller on one device
+
 router.get(`/devices/:id/controllers`, async (req, res) => {
     const deviceId = req.params.id;
     const controllersData = await ControllersQuery.getControllerByDevice(deviceId);
@@ -118,6 +116,7 @@ router.get(`/devices/:id/controllers`, async (req, res) => {
 //  Sensors
 
 // get all readings of one sensor
+
 router.get('/sensor/:id/readings', async (req, res) => {
     const sensor_id = req.params.id;
     const readings = await SensorsQuery.allReadings(sensor_id);
@@ -126,6 +125,7 @@ router.get('/sensor/:id/readings', async (req, res) => {
 });
 
 // all sensor readings on one devise
+
 router.get('/device/:id/sensors/readings', async (req, res) => {
     const deviceId = req.params.id;
     const sensorsData = await SensorsQuery.getSensorsByDevice(deviceId);
@@ -189,10 +189,13 @@ res.send(shows);
 
 // Change default light show
 
-router.get('/controller/lightshow/:id/change', (req, res) => {
+router.get('/controller/lightshow/:id/change', async (req, res) => {
     const showId = req.params.id;
-    ControllersQuery.changeDefaultShow(showId);
-    console.log("TCL: changing show", "changing show")
+    const show = await ControllersQuery.changeDefaultShow(showId);
+    const controllerData = await ControllersQuery.getControllerFromId(show.controller_id);
+    const nodeId = await DeviceQuery.getNodeId(controllerData.device_id);
+    const nodeIp = await NodeQuery.getNodeIp(nodeId);
+    Controller.lightshowToggle(nodeIp, controllerData)
     res.send("changing show")
 })
 
@@ -203,14 +206,12 @@ router.get('/controller/lightshow/:id/change', (req, res) => {
 router.get('/sensor/:id/current', async (req, res) => {
     const sensorId = req.params.id;
     const sensorData = await SensorsQuery.getSensorFromId(sensorId);
-    const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id)
-    const nodeId = await DeviceQuery.getNodeId(sensorData.device_id)
-    const nodeIp = await NodeQuery.getNodeIp(nodeId)
-
-    const reading = await SensorsQuery.currentReading(sensorData, deviceData[0], nodeIp)
+    const deviceData = await DeviceQuery.getOneDevice(sensorData.device_id);
+    const nodeId = await DeviceQuery.getNodeId(sensorData.device_id);
+    const nodeIp = await NodeQuery.getNodeIp(nodeId);
+    const reading = await SensorsQuery.currentReading(sensorData, deviceData[0], nodeIp);
     res.send(reading);
 
 })
-
 
 module.exports = router;
